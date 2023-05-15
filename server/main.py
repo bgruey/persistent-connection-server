@@ -11,7 +11,8 @@ config = HeadConfig(
     host=os.getenv("SERVER_HOST"),
     port=int(os.getenv("SERVER_PORT")),
     max_workers=int(os.getenv("MAX_WORKERS")),
-    socket_timeout_s=float(os.getenv("SOCKET_TIMEOUT_S"))
+    socket_timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),
+    inactive_stop_s=int(os.getenv("SERVER_INACTIVE_STOP_S") or 1)
 )
 logging.error(config.__dict__)
 head = Head(

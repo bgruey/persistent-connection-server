@@ -1,7 +1,5 @@
 import logging
 import os
-import random
-import time
 import threading
 
 from client.client import ClientConfig, Client
@@ -22,14 +20,8 @@ def thread_pings():
 
     for _ in range(10):
         client.ping()
-        time.sleep(random.randint(0, 3))
-    sleep_t = random.randint(1, 20)
-    #time.sleep(sleep_t)
-    try:
-        client.close()
-        logging.error("Closed after %s seconds", sleep_t)
-    except Exception as exc:
-        logging.error("ERROR closed after %s seconds: %s", sleep_t, exc)
+    client.close()
+    logging.error("Closed")
 
 
 threads = []

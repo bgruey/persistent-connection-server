@@ -10,12 +10,20 @@ class HeadConfig:
     port: int
     max_workers: int
     socket_timeout_s: float
+    inactive_stop_s: int
 
-    def __init__(self, host: str, port: int, max_workers: int, socket_timeout_s: float):
+    def __init__(
+            self,
+            host: str,
+            port: int,
+            max_workers: int,
+            socket_timeout_s: float,
+            inactive_stop_s: int = 0):
         self.host = host
         self.port = port
         self.max_workers = max_workers
         self.socket_timeout_s = socket_timeout_s
+        self.inactive_stop_s = inactive_stop_s
 
 
 class Head:
@@ -35,13 +43,14 @@ class Head:
         self.listening_socket.bind((self.config.host, self.config.port))
         self.listening_socket.listen(100)
 
-    def _clean_workers(self):
+    def _clean_workers(self) -> int:
         finished_workers = []
         for i, worker in enumerate(self.workers):
             if not worker.is_alive():
                 finished_workers.append(i)
         for i in finished_workers:
             del self.workers[i]
+        return len(self.workers)
 
     def add_worker(self, conn: socket.socket, addr: str) -> typing.Optional[Worker]:
         self._clean_workers()
@@ -55,6 +64,7 @@ class Head:
 
     def _run(self):
         logging.error("Starting Server")
+        last_added_connection = time.time()
         while True:
             try:
                 conn, addr = self.listening_socket.accept()
@@ -62,6 +72,7 @@ class Head:
                 add_attempt = time.time()
                 while True:
                     if self.add_worker(conn, addr):
+                        last_added_connection = time.time()
                         break
                     time.sleep(0.1)
                     if time.time() - add_attempt > self.config.socket_timeout_s:
@@ -70,3 +81,6 @@ class Head:
 
             except socket.timeout:
                 pass
+
+            if 0 < self.config.inactive_stop_s < time.time() - last_added_connection:
+                break
