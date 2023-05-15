@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  server:
+    build:
+      context: ./server/
+    container_name: "${SERVER_HOST}"
+    init: true
+    expose:
+      - "${SERVER_PORT}"
+    environment:
+      - SERVER_HOST
+      - SERVER_PORT
+      - MAX_WORKERS
+      - SOCKET_TIMEOUT_S
+
+  client:
+    depends_on:
+      server:
+        condition: service_started
+    build:
+      context: ./client
+    container_name: client
+    init: true
+    environment:
+      - SERVER_HOST
+      - SERVER_PORT
+      - MAX_WORKERS
+      - SOCKET_TIMEOUT_S

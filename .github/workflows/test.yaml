@@ -1,0 +1,15 @@
+name: Build and Test
+on:
+  [push]
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: run test
+        run: |
+          source .env && docker-compose up --build
