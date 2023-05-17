@@ -21,4 +21,4 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 #CMD ls -l && python main.py
-CMD while true; do sleep 30; done
+CMD sleep 20

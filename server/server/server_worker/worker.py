@@ -10,7 +10,8 @@ import uuid
 from messages import mrequests, mresponses
 
 logging.basicConfig(
-    level=logging.WARNING, format="%(created)s %(process)s: %(message)s"
+    level=logging.INFO,
+    format="%(created)s %(process)s: %(message)s"
 )
 
 
@@ -37,7 +38,7 @@ class Worker(multiprocessing.Process):
 
     def run(self):
         msg_count = 0
-        logging.error("Worker started with: %s, %s", self.address, self.connection)
+        logging.info("Worker started with: %s, %s", self.address, self.connection)
         while True:
             ready = select.select([self.connection], [], [], 0.1)
             if ready[0]:
@@ -46,10 +47,10 @@ class Worker(multiprocessing.Process):
                 self.last_messaged = time.time()
                 msg_count += 1
                 if message_t == mrequests.PingRequest:
-                    logging.error("Pong!")
+                    logging.info("Pong!")
                     self.send_message(self.ping_response_b)
                 elif message_t == mrequests.UUIDRequest:
-                    logging.error("UUID Request: %s", message)
+                    logging.info("UUID Request: %s", message)
                     self.send_message(
                         mresponses.UUIDResponse(
                             title=message.data.title, uuid=uuid.uuid4().hex
@@ -61,12 +62,12 @@ class Worker(multiprocessing.Process):
                 else:
                     logging.error("Unknown Message: %s", message)
             elif time.time() - self.last_messaged > self.timeout_s:
-                logging.error("Closing due to timeout.")
+                logging.info("Closing due to timeout.")
                 self.send_close()
                 break
 
     def send_close(self):
-        logging.error("Sending close.")
+        logging.info("Sending close.")
         self.send_message(self.close_response_b)
         self.connection.close()
 
@@ -82,7 +83,6 @@ class Worker(multiprocessing.Process):
                 raise ConnectionError("Expected bytes in socket, got none.")
             chunks.append(chunk)
             bytes_read += len(chunk)
-        logging.error("Worker Read: %s", b"".join(chunks))
         return b"".join(chunks)
 
     def send_message(self, message: bytes):

@@ -7,7 +7,7 @@ from client.client import BaseClient, BaseClientConfig
 from messages import mrequests, mresponses
 
 logging.basicConfig(
-    level=logging.WARNING,
+    level=logging.INFO,
     format="%(created)s %(thread)d %(filename)s %(lineno)s: %(message)s",
 )
 
@@ -34,7 +34,7 @@ def thread_pings():
     )
 
     time.sleep(10)
-    logging.error(client.get_uuid(title="title data value"))
+    logging.info(client.get_uuid(title="title data value"))
     client.close()
     logging.error("Closed")
 

@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from messages import mrequests
+from messages import mrequests, mresponses
 
 from .client import TestClient, TestClientConfig
 
@@ -23,4 +23,9 @@ def test_client():
 
 def test_ping(test_client):
     response = test_client.ping()
-    assert response == {"name": "ping-res"}
+    assert response == mresponses.PingResponse()
+
+
+def test_close(test_client):
+    response = test_client.close()
+    assert response == mresponses.CloseResponse()

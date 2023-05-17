@@ -65,11 +65,11 @@ class Head:
             return self.workers[-1]
 
     def _run(self):
-        logging.error("Starting Server")
+        logging.info("Starting Server")
         while True:
             try:
                 conn, addr = self.listening_socket.accept()
-                logging.error("Starting process for: %s, %s", addr, conn)
+                logging.info("Starting process for: %s, %s", addr, conn)
                 add_attempt = time.time()
                 while True:
                     if self.add_worker(conn, addr):
@@ -80,4 +80,4 @@ class Head:
                         break
 
             except socket.timeout:
-                logging.error("No active connections, timout waiting.")
+                logging.info("No active connections, timedout waiting.")

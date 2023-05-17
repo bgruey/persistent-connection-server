@@ -4,9 +4,10 @@ import os
 from server.server_head.head import Head, HeadConfig
 
 logging.basicConfig(
-    level=logging.WARNING, format="%(created)s %(process)s: %(message)s"
+    level=logging.INFO,
+    format="%(created)s %(process)s %(lineno)s: %(message)s"
 )
-logging.error("Starting Server Head")
+logging.info("Starting Server Head")
 
 config = HeadConfig(
     host=os.getenv("SERVER_HOST"),
@@ -16,4 +17,4 @@ config = HeadConfig(
 )
 head = Head(config=config)
 
-logging.error("Server Finished.")
+logging.info("Server Finished.")

@@ -53,9 +53,9 @@ class PersistentSocket:
     def _run_ping_thread(self):
         def ping_thread(psock: "PersistentSocket"):
             sleep_s = psock.config.timeout_s * 0.5
-            logging.error("Sleeping %s seconds per ping in thread.", sleep_s)
+            logging.info("Sleeping %s seconds per ping in thread.", sleep_s)
             if not sleep_s > 0:
-                logging.error("No sleep_s, ping thread exiting.")
+                logging.info("No sleep_s, ping thread exiting.")
                 return
             while psock.open:
                 try:
@@ -82,7 +82,6 @@ class PersistentSocket:
         self.open = True
 
     def _send(self, message: bytes):
-        logging.error("P Socket Send: %s", message)
         message_size = len(message)
         packet = struct.pack(f">I{message_size}s", message_size, message)
         packet_size = message_size + 4
@@ -110,7 +109,7 @@ class PersistentSocket:
 
     @thread_lock_wrapper
     def ping(self) -> mresponses.PingResponse:
-        logging.error("Ping!")
+        logging.info("Ping!")
         response = mresponses.PingResponse(
             message=self._send_and_recv(self.ping_request_b)
         )
@@ -120,7 +119,7 @@ class PersistentSocket:
 
     @thread_lock_wrapper
     def close(self) -> mresponses.CloseResponse:
-        logging.error("Close.")
+        logging.info("Close.")
         response = mresponses.CloseResponse(
             message=self._send_and_recv(self.close_request_b)
         )
