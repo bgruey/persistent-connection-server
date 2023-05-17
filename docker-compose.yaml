@@ -2,7 +2,8 @@ version: "3.7"
 services:
   server:
     build:
-      context: ./server/
+      context: .
+      dockerfile: Dockerfile-server
     container_name: "${SERVER_HOST}"
     init: true
     expose:
@@ -18,8 +19,9 @@ services:
       server:
         condition: service_started
     build:
-      context: ./client
-    container_name: client
+      context: .
+      dockerfile: Dockerfile-client
+    container_name: "${CLIENT_HOST}"
     init: true
     environment:
       - SERVER_HOST
