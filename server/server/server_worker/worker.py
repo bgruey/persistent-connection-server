@@ -9,10 +9,7 @@ import uuid
 
 from messages import mrequests, mresponses
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(created)s %(process)s: %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(created)s %(process)s: %(message)s")
 
 
 class Worker(multiprocessing.Process):

@@ -4,8 +4,7 @@ import os
 from server.server_head.head import Head, HeadConfig
 
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(created)s %(process)s %(lineno)s: %(message)s"
+    level=logging.INFO, format="%(created)s %(process)s %(lineno)s: %(message)s"
 )
 logging.info("Starting Server Head")
 

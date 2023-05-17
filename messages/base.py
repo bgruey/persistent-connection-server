@@ -21,3 +21,8 @@ class Base:
     def __repr__(self):
         ret = {"name": self.name, "data": repr(self.data)}
         return f"{ret}"
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return repr(self) == repr(other)
+        return False
