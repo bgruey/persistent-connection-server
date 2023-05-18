@@ -20,18 +20,16 @@ def thread_pings():
             timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),
         )
     )
-    for i in range(1):
+    for _ in range(10):
         client.ping()
-        time.sleep(2)
 
     time.sleep(10)
-    logging.info(client.get_uuid(title="title data value"))
+    client.get_uuid(title="title data value")
     client.close()
-    logging.error("Closed")
 
 
 threads = []
-for i in range(1):
+for i in range(20):
     threads.append(threading.Thread(target=thread_pings))
     threads[-1].start()
 for thread in threads:
