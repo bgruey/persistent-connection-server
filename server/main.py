@@ -1,7 +1,7 @@
 import logging
 import os
 
-from example_worker import Worker
+from example_protocol.example_worker import Worker
 
 from server.server_head.head import Head, HeadConfig
 

@@ -7,13 +7,14 @@ import pytest
 from protocol import mresponses
 from protocol.error import ErrorResponse
 
-from .client import TestClient, TestClientConfig
+from client.client import BaseClientConfig
+from example_protocol.example_client import Client
 
 
 @pytest.fixture(scope="session")
 def test_client():
-    client = TestClient(
-        config=TestClientConfig(
+    client = Client(
+        config=BaseClientConfig(
             host=os.getenv("SERVER_HOST"),
             port=int(os.getenv("SERVER_PORT")),
             timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),

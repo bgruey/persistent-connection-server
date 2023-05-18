@@ -3,25 +3,14 @@ import os
 import threading
 import time
 
-from client.client import BaseClient, BaseClientConfig
-from protocol import mrequests, mresponses
+from client.client import BaseClientConfig
+from example_protocol.example_client import Client
+
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(created)s %(thread)d %(filename)s %(lineno)s: %(message)s",
 )
-
-
-class Client(BaseClient):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def get_uuid(self, title: str) -> mresponses.UUIDResponse:
-        r = mrequests.UUIDRequest(title=title)
-        logging.error("R: %s", r)
-        return mresponses.UUIDResponse.from_bytes(
-            message=self.psock.get_response(r.to_bytes())
-        )
 
 
 def thread_pings():

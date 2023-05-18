@@ -14,6 +14,7 @@ RUN apt-get update && apt-get upgrade -y
 # copy whole project to your docker home directory.
 COPY server $DockerHOME/
 COPY protocol $DockerHOME/protocol
+COPY example_protocol $DockerHOME/example_protocol
 
 # install dependencies
 RUN pip install --upgrade pip
