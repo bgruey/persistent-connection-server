@@ -4,11 +4,10 @@ import time
 
 import pytest
 
-from protocol import mresponses
-from protocol.error import ErrorResponse
-
 from client.client import BaseClientConfig
 from example_protocol.example_client import Client
+from protocol import mresponses
+from protocol.error import ErrorResponse
 
 
 @pytest.fixture(scope="session")

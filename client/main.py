@@ -6,7 +6,6 @@ import time
 from client.client import BaseClientConfig
 from example_protocol.example_client import Client
 
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(created)s %(thread)d %(filename)s %(lineno)s: %(message)s",

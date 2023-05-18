@@ -17,7 +17,5 @@ class TestClient(BaseClient):
 
     def get_uuid(self, title: str) -> mresponses.UUIDResponse:
         return mresponses.UUIDResponse.from_bytes(
-            message=self.get_response(
-                mrequests.UUIDRequest(title=title).to_bytes()
-            )
+            message=self.get_response(mrequests.UUIDRequest(title=title).to_bytes())
         )
