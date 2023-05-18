@@ -28,6 +28,9 @@ class BaseClient:
         self.config = config
         self.psock = PersistentSocket(config=config.psocket_config)
 
+    def get_response(self, message: bytes):
+        return self.psock.get_response(message)
+
     def reconnect(self):
         return self.psock.connect()
 

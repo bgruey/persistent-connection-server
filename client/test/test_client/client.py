@@ -16,8 +16,8 @@ class TestClient(BaseClient):
         super().__init__(*args, **kwargs)
 
     def get_uuid(self, title: str) -> mresponses.UUIDResponse:
-        return mresponses.UUIDResponse(
-            message=self.psock.get_response(
+        return mresponses.UUIDResponse.from_bytes(
+            message=self.get_response(
                 mrequests.UUIDRequest(title=title).to_bytes()
             )
         )

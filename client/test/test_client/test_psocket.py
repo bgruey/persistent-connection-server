@@ -5,7 +5,7 @@ import time
 import pytest
 
 from protocol import mresponses
-from protocol.error import Error
+from protocol.error import ErrorResponse
 
 from .client import TestClient, TestClientConfig
 
@@ -26,6 +26,14 @@ def test_client():
 def test_ping(test_client):
     response = test_client.ping()
     assert response == mresponses.PingResponse()
+
+
+def test_uuid(test_client):
+    title = "Test Title"
+    response = test_client.get_uuid(title)
+
+    assert response.data.title == title
+    assert response.data.uuid
 
 
 def test_ping_thread(test_client):
@@ -51,4 +59,4 @@ def test_shutdown(test_client):
     assert type(response) == mresponses.ShutdownResponse
 
     response = test_client.reconnect()
-    assert type(response) == Error
+    assert type(response) == ErrorResponse

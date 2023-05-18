@@ -3,10 +3,10 @@ import multiprocessing
 import select
 import socket
 import time
-import uuid
 
 from protocol import mrequests, mresponses
-from protocol.socket_lib import SizeDataSocket, SizeDataSocketConfig
+from protocol.error import ErrorResponse
+from protocol.socket_lib import SizeDataSocket
 
 logging.basicConfig(
     level=logging.INFO,
@@ -14,7 +14,7 @@ logging.basicConfig(
 )
 
 
-class Worker(multiprocessing.Process, SizeDataSocket):
+class BaseWorker(multiprocessing.Process, SizeDataSocket):
     connection: socket.socket
     address: str
     server_run: multiprocessing.Value
@@ -46,35 +46,48 @@ class Worker(multiprocessing.Process, SizeDataSocket):
         multiprocessing.Process.__init__(self)
         self.start()
 
+    def process(self, message_t, message) -> bool:
+        """
+        Overload this function to process custom messages. It should have the following:
+            - message_t: expected to be the request type
+            - message: expected to be message data
+            - RETURN: boolean, true if processed and
+                      false if message_t was not processed by custom messages.
+        """
+        return False
+
+    def _process(self, message: bytes):
+        message = mrequests.Base.from_bytes(message=message)
+        message_t = type(message)
+        if self.process(message_t, message):
+            return
+
+        if message_t == mrequests.PingRequest:
+            logging.info("Pong!")
+            self._send(self.ping_response_b)
+        elif message_t == mrequests.CloseRequest:
+            logging.info("Close request")
+            self.send_close()
+        elif message_t == mrequests.ShutdownRequest:
+            logging.info("Shutdown request")
+            self.shutdown()
+        else:
+            logging.error("Unknown Message: %s", message)
+
+    def _send_error(self, code: int, description: str):
+        self._send(message=ErrorResponse(code=code, description=description).to_bytes())
+
     def run(self):
-        msg_count = 0
         logging.info("Worker started for %s", self.address)
         while self.process_run:
             ready = select.select([self.connection], [], [], 0.1)
             if ready[0]:
-                message = mrequests.Base.from_bytes(message=self._recv())
-                message_t = type(message)
-                msg_count += 1
-
-                if message_t == mrequests.PingRequest:
-                    logging.info("Pong!")
-                    self._send(self.ping_response_b)
-                elif message_t == mrequests.UUIDRequest:
-                    logging.info("UUID Request: %s", message)
-                    self._send(
-                        mresponses.UUIDResponse(
-                            title=message.data.title, uuid=uuid.uuid4().hex
-                        ).to_bytes()
-                    )
-                elif message_t == mrequests.CloseRequest:
-                    logging.info("Close request")
-                    self.send_close()
-                elif message_t == mrequests.ShutdownRequest:
-                    logging.info("Shutdown request")
-                    self.shutdown()
-                else:
-                    logging.error("Unknown Message: %s", message)
-
+                try:
+                    self._process(message=self._recv())
+                except Exception as exc:
+                    # Not expected to be used in production where exceptions are
+                    # a security issue.
+                    self._send_error(code=500, description=str(exc))
             elif time.time() - self.last_recv > self.timeout_s:
                 logging.info("Closing due to timeout.")
                 self.send_close()

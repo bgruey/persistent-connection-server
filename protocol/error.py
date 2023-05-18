@@ -1,7 +1,7 @@
 from .base import Base
 
 
-class Error(Base):
+class ErrorResponse(Base):
     name = "error"
 
     class ErrorData:

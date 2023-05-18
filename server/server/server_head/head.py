@@ -7,7 +7,7 @@ import typing
 from protocol import error, mrequests, mresponses
 from protocol.socket_lib import recv_message, send_message
 
-from ..server_worker.worker import Worker
+from ..server_worker.worker import BaseWorker
 
 
 class HeadConfig:
@@ -16,6 +16,7 @@ class HeadConfig:
     max_workers: int
     socket_timeout_s: float
     inactive_stop_s: int
+    Worker: typing.Type[BaseWorker]
 
     def __init__(
         self,
@@ -23,17 +24,19 @@ class HeadConfig:
         port: int,
         max_workers: int,
         socket_timeout_s: float,
+        Worker: typing.Type[BaseWorker],  # noqa
     ):
         self.host = host
         self.port = port
         self.max_workers = max_workers
         self.socket_timeout_s = socket_timeout_s
+        self.Worker = Worker
 
 
 class Head:
     config: HeadConfig
     listening_socket: socket.socket
-    workers: typing.Dict[int, Worker]
+    workers: typing.Dict[int, BaseWorker]
     open_message_ok_b: bytes
     run: multiprocessing.Value
 
@@ -60,11 +63,11 @@ class Head:
             del self.workers[pid]
         return len(self.workers)
 
-    def add_worker(self, conn: socket.socket, addr: str) -> typing.Optional[Worker]:
+    def add_worker(self, conn: socket.socket, addr: str) -> typing.Optional[BaseWorker]:
         self._clean_workers()
         if len(self.workers) < self.config.max_workers:
             send_message(conn, self.open_message_ok_b)
-            worker = Worker(
+            worker = self.config.Worker(
                 connection=conn,
                 address=addr,
                 timeout_s=self.config.socket_timeout_s,
@@ -87,7 +90,7 @@ class Head:
                     else:
                         send_message(
                             conn,
-                            error.Error(
+                            error.ErrorResponse(
                                 code=400,
                                 description="Shutting down, not accepting connections.",
                             ).to_bytes(),
@@ -96,7 +99,7 @@ class Head:
                 else:
                     send_message(
                         conn,
-                        error.Error(
+                        error.ErrorResponse(
                             code=400,
                             description=f"Invalid open request: {request.name}",
                         ).to_bytes(),

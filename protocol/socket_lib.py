@@ -3,7 +3,7 @@ import struct
 import time
 import typing
 
-from .error import Error
+from .error import ErrorResponse
 from .mrequests import OpenRequest
 from .mresponses import Base, OpenResponse
 
@@ -95,7 +95,7 @@ class SizeDataSocket:
         else:
             raise ValueError("Empty SizeDataSocket Constructor is invalid.")
 
-    def connect(self) -> typing.Union[OpenResponse, Error]:
+    def connect(self) -> typing.Union[OpenResponse, ErrorResponse]:
         if self.open:
             raise Exception("Connecting to open socket.")
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -105,7 +105,7 @@ class SizeDataSocket:
         open_response = Base.from_bytes(
             message=self._send_and_recv(self.open_request_b)
         )
-        if type(open_response) == Error:
+        if type(open_response) == ErrorResponse:
             self.open = False
             return open_response
         elif type(open_response) != OpenResponse:
