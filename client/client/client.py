@@ -1,6 +1,6 @@
-import types
+import logging
 
-from messages import mresponses
+from protocol import mrequests, mresponses
 
 from .psocket import PersistentSocket, PSocketConfig
 
@@ -28,8 +28,18 @@ class BaseClient:
         self.config = config
         self.psock = PersistentSocket(config=config.psocket_config)
 
+    def reconnect(self):
+        return self.psock.connect()
+
     def close(self) -> mresponses.CloseResponse:
-        return self.psock.close()
+        return self.psock.send_close()
 
     def ping(self) -> mresponses.PingResponse:
-        return self.psock.ping()
+        return self.psock.send_ping()
+
+    def send_shutdown(self) -> mresponses.ShutdownResponse:
+        response = mresponses.ShutdownResponse(
+            message=self.psock.get_response(mrequests.ShutdownRequest().to_bytes())
+        )
+        self.psock.close()
+        return response

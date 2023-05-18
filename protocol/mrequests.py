@@ -25,6 +25,15 @@ class CloseRequest(Base):
         self.data = None
 
 
+class ShutdownRequest(Base):
+    name = "shutdown-req"
+    data: None
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data = None
+
+
 class UUIDRequest(Base):
     name = "uuid-req"
 

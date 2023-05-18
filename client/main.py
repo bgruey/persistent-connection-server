@@ -4,7 +4,7 @@ import threading
 import time
 
 from client.client import BaseClient, BaseClientConfig
-from messages import mrequests, mresponses
+from protocol import mrequests, mresponses
 
 logging.basicConfig(
     level=logging.INFO,
@@ -32,6 +32,9 @@ def thread_pings():
             timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),
         )
     )
+    for i in range(1):
+        client.ping()
+        time.sleep(2)
 
     time.sleep(10)
     logging.info(client.get_uuid(title="title data value"))

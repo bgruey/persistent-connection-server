@@ -13,12 +13,13 @@ RUN apt-get update && apt-get upgrade -y
 
 # copy whole project to your docker home directory.
 ADD client/ $DockerHOME/
-COPY messages $DockerHOME/messages
+COPY protocol $DockerHOME/protocol
 
 # install dependencies
 RUN pip install --upgrade pip
 # run this command to install all dependencies
 RUN pip install -r requirements.txt
 
-#CMD ls -l && python main.py
-CMD sleep 20
+CMD sleep 5
+#CMD python main.py
+#CMD python -m pytest -vvx test/

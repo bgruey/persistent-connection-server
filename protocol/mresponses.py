@@ -11,7 +11,7 @@ class OpenResponse(Base):
             self.status = status
 
         def __repr__(self):
-            return '{"status": "' + self.status + '"}'
+            return '{"status": "' + repr(self.status) + '"}'
 
     data: OpenData
 
@@ -30,6 +30,15 @@ class PingResponse(Base):
 
 class CloseResponse(Base):
     name = "close-res"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data = None
+
+
+class ShutdownResponse(Base):
+    name = "shutdown-res"
+    data: None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

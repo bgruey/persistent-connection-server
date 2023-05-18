@@ -1,7 +1,11 @@
 import logging
+import multiprocessing
 import socket
 import time
 import typing
+
+from protocol import error, mrequests, mresponses
+from protocol.socket_lib import recv_message, send_message
 
 from ..server_worker.worker import Worker
 
@@ -29,11 +33,15 @@ class HeadConfig:
 class Head:
     config: HeadConfig
     listening_socket: socket.socket
-    workers: typing.List[Worker]
+    workers: typing.Dict[int, Worker]
+    open_message_ok_b: bytes
+    run: multiprocessing.Value
 
     def __init__(self, config: HeadConfig):
         self.config = config
-        self.workers = []
+        self.open_message_ok_b = mresponses.OpenResponse(status="OK").to_bytes()
+        self.run = multiprocessing.Value("i", 1)
+        self.workers = {}
         self._connect()
         self._run()
 
@@ -45,39 +53,60 @@ class Head:
 
     def _clean_workers(self) -> int:
         finished_workers = []
-        for i, worker in enumerate(self.workers):
+        for pid, worker in self.workers.items():
             if not worker.is_alive():
-                finished_workers.append(i)
-        for i in finished_workers:
-            del self.workers[i]
+                finished_workers.append(pid)
+        for pid in finished_workers:
+            del self.workers[pid]
         return len(self.workers)
 
     def add_worker(self, conn: socket.socket, addr: str) -> typing.Optional[Worker]:
         self._clean_workers()
         if len(self.workers) < self.config.max_workers:
-            self.workers.append(
-                Worker(
-                    connection=conn,
-                    address=addr,
-                    timeout_s=self.config.socket_timeout_s,
-                )
+            send_message(conn, self.open_message_ok_b)
+            worker = Worker(
+                connection=conn,
+                address=addr,
+                timeout_s=self.config.socket_timeout_s,
+                server_run=self.run,
             )
-            return self.workers[-1]
+
+            self.workers[worker.pid] = worker
+            return self.workers[worker.pid]
 
     def _run(self):
         logging.info("Starting Server")
-        while True:
+        while self.run.value:
             try:
                 conn, addr = self.listening_socket.accept()
-                logging.info("Starting process for: %s, %s", addr, conn)
-                add_attempt = time.time()
-                while True:
-                    if self.add_worker(conn, addr):
-                        break
-                    time.sleep(0.1)
-                    if time.time() - add_attempt > self.config.socket_timeout_s:
+                conn.settimeout(self.config.socket_timeout_s)
+                request = mrequests.Base.from_bytes(recv_message(conn))
+                if type(request) == mrequests.OpenRequest:
+                    if self.run.value:
+                        self.add_worker(conn, addr)
+                    else:
+                        send_message(
+                            conn,
+                            error.Error(
+                                code=400,
+                                description="Shutting down, not accepting connections.",
+                            ).to_bytes(),
+                        )
                         conn.close()
-                        break
+                else:
+                    send_message(
+                        conn,
+                        error.Error(
+                            code=400,
+                            description=f"Invalid open request: {request.name}",
+                        ).to_bytes(),
+                    )
+                    conn.close()
+                    continue
 
             except socket.timeout:
-                logging.info("No active connections, timedout waiting.")
+                logging.info("No active connections, timed out waiting.")
+        logging.info("Shutting down")
+        self.listening_socket.close()
+        while self._clean_workers():
+            time.sleep(1)

@@ -8,8 +8,7 @@ class Base:
     data: typing.Any
 
     def __init__(self, *args, **kwargs):
-        if kwargs.get("message"):
-            self.from_bytes(kwargs.get("message"))
+        pass
 
     def to_bytes(self):
         return jsonpickle.dumps(self).encode("UTF-8")
