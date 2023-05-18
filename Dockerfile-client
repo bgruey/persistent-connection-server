@@ -20,6 +20,6 @@ RUN pip install --upgrade pip
 # run this command to install all dependencies
 RUN pip install -r requirements.txt
 
-CMD sleep 5
+CMD while true; do time.sleep 10; done
 #CMD python main.py
 #CMD python -m pytest -vvx test/
