@@ -77,12 +77,7 @@ class SizeDataSocket:
         self.open_request_b = OpenRequest().to_bytes()
         self.open = False
         self.last_recv = 0.0
-        self.last_times = {
-            "s_send": 0.0,
-            "e_send": 0.0,
-            "s_recv": 0.0,
-            "e_recv": 0.0
-        }
+        self.last_times = {"s_send": 0.0, "e_send": 0.0, "s_recv": 0.0, "e_recv": 0.0}
 
         if sock:
             if timeout_s is None:

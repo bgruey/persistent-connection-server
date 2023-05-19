@@ -1,6 +1,5 @@
+from . import test_base, test_example_requests
 from .fixture_example_client import test_client
-from . import test_base
-from . import test_example_requests
 
 
 def test_run(test_client):

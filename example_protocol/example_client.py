@@ -1,6 +1,7 @@
 from client.client import BaseClient
-from .presponses import UUIDResponse
+
 from .prequests import UUIDRequest
+from .presponses import UUIDResponse
 
 
 class Client(BaseClient):
@@ -9,8 +10,5 @@ class Client(BaseClient):
 
     def get_uuid(self, title: str) -> UUIDResponse:
         return UUIDResponse.from_bytes(
-            message=self.psock.get_response(
-                UUIDRequest(title=title).to_bytes()
-            )
+            message=self.psock.get_response(UUIDRequest(title=title).to_bytes())
         )
-

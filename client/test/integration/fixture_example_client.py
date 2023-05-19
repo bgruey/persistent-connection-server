@@ -4,8 +4,8 @@ import pytest
 
 from client.client import BaseClientConfig
 from example_protocol.example_client import Client
-from protocol.mresponses import ShutdownResponse
 from protocol.error import ErrorResponse
+from protocol.mresponses import ShutdownResponse
 
 
 @pytest.fixture(scope="session")

@@ -1,6 +1,6 @@
 [tool.black]
-include = '\.py$'
-target_version = ['py310']
+include = ".py$"
+target_version = ["py310"]
 
 
 [tool.isort]
