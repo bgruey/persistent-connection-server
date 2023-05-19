@@ -63,7 +63,6 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
             return
 
         if message_t == mrequests.PingRequest:
-            logging.info("Pong!")
             self._send(self.ping_response_b)
         elif message_t == mrequests.CloseRequest:
             logging.info("Close request")

@@ -27,6 +27,15 @@ Ideally the messages would move to something like Google's
 [protocol buffers](https://protobuf.dev/), but the lack of support for
 Javascript and C (at least officially) makes for a poor choice.
 
+The performance tests comparing a JSON serialized dictionary compared to a
+JSONPickle protocol message indicates JSONPickle is 3 times slower to dump
+and 16 times slower to load.
+```
+            Dump         |   Load         | Serialized Size in Bytes
+    JP:   (2.973, 0.127) | (7.886, 0.153) | 295203
+    JSON: (0.974, 0.096) | (0.519, 0.027) | 295100
+```
+
 ### Base Messages
 
 The base client/server implements the following messages in request/response format:

@@ -50,7 +50,7 @@ class Head:
 
     def _connect(self):
         self.listening_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.listening_socket.settimeout(30)
+        self.listening_socket.settimeout(1)
         self.listening_socket.bind((self.config.host, self.config.port))
         self.listening_socket.listen(100)
 
