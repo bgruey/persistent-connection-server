@@ -65,10 +65,8 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
         if message_t == mrequests.PingRequest:
             self._send(self.ping_response_b)
         elif message_t == mrequests.CloseRequest:
-            logging.info("Close request")
             self.send_close()
         elif message_t == mrequests.ShutdownRequest:
-            logging.info("Shutdown request")
             self.shutdown()
         else:
             logging.error("Unknown Message: %s", message)
@@ -77,7 +75,6 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
         self._send(message=ErrorResponse(code=code, description=description).to_bytes())
 
     def run(self):
-        logging.info("Worker started for %s", self.address)
         while self.process_run:
             ready = select.select([self.connection], [], [], 0.1)
             if ready[0]:
@@ -90,8 +87,6 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
             elif time.time() - self.last_recv > self.timeout_s:
                 logging.info("Closing due to timeout.")
                 self.send_close()
-
-        logging.info("Worker finished for %s", self.address)
 
     def shutdown(self):
         with self.server_run.get_lock():

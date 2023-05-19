@@ -40,7 +40,7 @@ class PersistentSocket(SizeDataSocket):
         super().__init__(
             config=config,
         )
-        self._start_ping_thread()
+        self.start_ping_thread()
 
     def _ping_thread_func(self):
         ping_s = self.config.timeout_s * 0.75
@@ -56,7 +56,7 @@ class PersistentSocket(SizeDataSocket):
                 logging.error("Ping failed, exiting ping thread: %s", exc)
                 break
 
-    def _start_ping_thread(self):
+    def start_ping_thread(self):
         self.ping_run = True
         self.ping_thread = threading.Thread(target=self._ping_thread_func)
         self.ping_thread.start()
@@ -81,13 +81,12 @@ class PersistentSocket(SizeDataSocket):
     def close(self, send: bool = True) -> typing.Optional[mresponses.CloseResponse]:
         if self.ping_run:
             self.stop_ping()
-        logging.info("Close.")
         if send:
             response = mresponses.CloseResponse(
                 message=self._send_and_recv(self.close_request_b)
             )
             if response.name != mresponses.CloseResponse.name:
                 raise Exception(f"Wrong response in close: {response}")
-        self.sock.close()
+        self._close()
         if send:
             return response  # noqa

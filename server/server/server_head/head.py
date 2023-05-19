@@ -79,8 +79,11 @@ class Head:
 
     def _run(self):
         logging.info("Starting Server")
-        while self.run.value:
+        shutdown_iterations = 0
+        while shutdown_iterations < 10:
             try:
+                if not self.run.value:
+                    shutdown_iterations += 1
                 conn, addr = self.listening_socket.accept()
                 conn.settimeout(self.config.socket_timeout_s)
                 request = mrequests.Base.from_bytes(recv_message(conn))
@@ -108,8 +111,7 @@ class Head:
                     continue
 
             except socket.timeout:
-                logging.info("No active connections, timed out waiting.")
-        logging.info("Shutting down")
+                pass
         self.listening_socket.close()
         while self._clean_workers():
-            time.sleep(1)
+            time.sleep(0.5)

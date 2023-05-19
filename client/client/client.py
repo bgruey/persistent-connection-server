@@ -32,7 +32,12 @@ class BaseClient:
         return self.psock.get_response(message)
 
     def reconnect(self):
-        return self.psock.connect()
+        response = self.psock.connect()
+        if type(response) != mresponses.OpenResponse:
+            raise ConnectionRefusedError(response.data.description)
+
+        self.psock.start_ping_thread()
+        return response
 
     def close(self) -> mresponses.CloseResponse:
         return self.psock.close()
