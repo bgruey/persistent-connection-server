@@ -29,7 +29,7 @@ Javascript and C (at least officially) makes for a poor choice.
 
 The performance tests comparing a JSON serialized dictionary compared to a
 JSONPickle protocol message indicates JSONPickle is 3 times slower to dump
-and 16 times slower to load.
+and 16 times slower to load. See the `performance_tests` folder for code.
 ```
             Dump         |   Load         | Serialized Size in Bytes
     JP:   (2.973, 0.127) | (7.886, 0.153) | 295203
