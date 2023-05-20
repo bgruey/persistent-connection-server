@@ -66,6 +66,7 @@ class SizeDataSocket:
     open: bool
     open_request_b: bytes
     last_recv: float
+    last_times: typing.Dict[str, float]
 
     def __init__(
         self,
@@ -76,6 +77,7 @@ class SizeDataSocket:
         self.open_request_b = OpenRequest().to_bytes()
         self.open = False
         self.last_recv = 0.0
+        self.last_times = {"s_send": 0.0, "e_send": 0.0, "s_recv": 0.0, "e_recv": 0.0}
 
         if sock:
             if timeout_s is None:
@@ -95,6 +97,11 @@ class SizeDataSocket:
         else:
             raise ValueError("Empty SizeDataSocket Constructor is invalid.")
 
+    def calc_last_times(self) -> typing.Tuple[float, float]:
+        last_send = self.last_times["e_send"] - self.last_times["s_send"]
+        last_recv = self.last_times["e_recv"] - self.last_times["s_recv"]
+        return last_send, last_recv
+
     def connect(self) -> typing.Union[OpenResponse, ErrorResponse]:
         if self.open:
             raise Exception("Connecting to open socket.")
@@ -109,10 +116,10 @@ class SizeDataSocket:
             self.open = False
             return open_response
         elif type(open_response) != OpenResponse:
-            raise ConnectionError("Did not receive OpeResponse: %s", open_response)
+            raise ConnectionError("Did not receive OpenResponse: %s", open_response)
         return open_response
 
-    def close(self):
+    def _close(self):
         self.open = False
         self.sock.close()
 
@@ -121,8 +128,13 @@ class SizeDataSocket:
         return self._recv()
 
     def _send(self, message: bytes):
+        self.last_times["s_send"] = time.perf_counter()
         send_message(self.sock, message)
+        self.last_times["e_send"] = time.perf_counter()
 
-    def _recv(self):
+    def _recv(self) -> bytes:
         self.last_recv = time.time()
-        return recv_message(self.sock, self.config.buffer_size)
+        self.last_times["s_recv"] = time.perf_counter()
+        message = recv_message(self.sock, self.config.buffer_size)
+        self.last_times["e_recv"] = time.perf_counter()
+        return message

@@ -32,17 +32,27 @@ class BaseClient:
         return self.psock.get_response(message)
 
     def reconnect(self):
-        return self.psock.connect()
+        response = self.psock.connect()
+        if type(response) != mresponses.OpenResponse:
+            raise ConnectionRefusedError(response.data.description)
+
+        self.psock.start_ping_thread()
+        return response
 
     def close(self) -> mresponses.CloseResponse:
-        return self.psock.send_close()
+        return self.psock.close()
 
     def ping(self) -> mresponses.PingResponse:
         return self.psock.send_ping()
 
     def send_shutdown(self) -> mresponses.ShutdownResponse:
+        self.psock.stop_ping()
+        logging.info("Sending shutdown request.")
         response = mresponses.ShutdownResponse(
             message=self.psock.get_response(mrequests.ShutdownRequest().to_bytes())
         )
-        self.psock.close()
+        if response.name != mresponses.ShutdownResponse.name:
+            raise ConnectionError("Did not receive ShutdownResponse: %s", response)
+        self.psock.close(send=False)
+        logging.info("Shutdown response: %s", response)
         return response

@@ -1,6 +1,7 @@
 import logging
 import threading
 import time
+import typing
 
 from protocol import mrequests, mresponses
 from protocol.socket_lib import SizeDataSocket, SizeDataSocketConfig
@@ -39,26 +40,30 @@ class PersistentSocket(SizeDataSocket):
         super().__init__(
             config=config,
         )
-        self._start_ping_thread()
+        self.start_ping_thread()
 
     def _ping_thread_func(self):
-        sleep_s = self.config.timeout_s * 0.4
-        if not sleep_s > 0:
+        ping_s = self.config.timeout_s * 0.75
+        if not ping_s > 0:
             logging.info("No sleep_s, ping thread exiting.")
             return
         while self.ping_run:
             try:
-                if time.time() - self.last_recv > sleep_s:
+                if time.time() - self.last_recv > ping_s:
                     self.send_ping()
-                time.sleep(sleep_s)
+                time.sleep(0.25)
             except Exception as exc:
                 logging.error("Ping failed, exiting ping thread: %s", exc)
                 break
 
-    def _start_ping_thread(self):
+    def start_ping_thread(self):
         self.ping_run = True
         self.ping_thread = threading.Thread(target=self._ping_thread_func)
         self.ping_thread.start()
+
+    def stop_ping(self):
+        self.ping_run = False
+        self.ping_thread.join()
 
     @thread_lock_wrapper
     def get_response(self, message: bytes) -> bytes:
@@ -66,7 +71,6 @@ class PersistentSocket(SizeDataSocket):
 
     @thread_lock_wrapper
     def send_ping(self) -> mresponses.PingResponse:
-        logging.info("Ping!")
         response = mresponses.PingResponse(
             message=self._send_and_recv(self.ping_request_b)
         )
@@ -74,15 +78,15 @@ class PersistentSocket(SizeDataSocket):
             raise Exception(f"Wrong response in ping: {response}")
         return response
 
-    @thread_lock_wrapper
-    def send_close(self) -> mresponses.CloseResponse:
-        self.ping_run = False
-        logging.info("Close.")
-        response = mresponses.CloseResponse(
-            message=self._send_and_recv(self.close_request_b)
-        )
-        if response.name != mresponses.CloseResponse.name:
-            raise Exception(f"Wrong response in close: {response}")
-        self.ping_thread.join()
-        self.close()
-        return response
+    def close(self, send: bool = True) -> typing.Optional[mresponses.CloseResponse]:
+        if self.ping_run:
+            self.stop_ping()
+        if send:
+            response = mresponses.CloseResponse(
+                message=self._send_and_recv(self.close_request_b)
+            )
+            if response.name != mresponses.CloseResponse.name:
+                raise Exception(f"Wrong response in close: {response}")
+        self._close()
+        if send:
+            return response  # noqa

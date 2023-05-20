@@ -3,9 +3,10 @@ import multiprocessing
 import socket
 import uuid
 
+from server.server_worker.worker import BaseWorker
+
 from .prequests import UUIDRequest
 from .presponses import UUIDResponse
-from server.server_worker.worker import BaseWorker
 
 
 class Worker(BaseWorker):
@@ -21,9 +22,7 @@ class Worker(BaseWorker):
     def process(self, message_t, message) -> bool:
         if message_t == UUIDRequest:
             self._send(
-                UUIDResponse(
-                    title=message.data.title, uuid=uuid.uuid4().hex
-                ).to_bytes()
+                UUIDResponse(title=message.data.title, uuid=uuid.uuid4().hex).to_bytes()
             )
             return True
         return False
