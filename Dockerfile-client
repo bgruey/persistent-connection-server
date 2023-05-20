@@ -23,3 +23,4 @@ RUN pip install -r requirements.txt
 
 #CMD python main.py && while true; do sleep 30; done
 CMD python -m pytest -vvv test/
+
