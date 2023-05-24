@@ -6,18 +6,23 @@ class OpenResponse(Base):
 
     class OpenData:
         status: str
+        process_id: int
 
-        def __init__(self, status: str = None):
+        def __init__(self, status: str, pid: int):
             self.status = status
+            self.process_id = pid
 
         def __repr__(self):
             return '{"status": "' + repr(self.status) + '"}'
 
     data: OpenData
 
-    def __init__(self, status: str = None, *args, **kwargs):
+    def __init__(self, status: str, pid: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.data = OpenResponse.OpenData(status=status)
+        self.data = OpenResponse.OpenData(status=status, pid=pid)
+
+    def update_pid(self, pid: int):
+        self.data.process_id = pid
 
 
 class PingResponse(Base):

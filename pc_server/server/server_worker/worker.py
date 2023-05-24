@@ -75,6 +75,7 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
         self._send(message=ErrorResponse(code=code, description=description).to_bytes())
 
     def run(self):
+        logging.info("Starting Worker %s", self.ident)
         while self.process_run:
             ready = select.select([self.connection], [], [], 0.1)
             if ready[0]:
