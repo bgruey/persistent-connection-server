@@ -10,6 +10,7 @@ RUN mkdir -p $DockerHOME
 # where your code lives
 WORKDIR $DockerHOME
 COPY test/ $DockerHOME/test/
+COPY example_protocol/ $DockerHOME/exampl_protocol/
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip

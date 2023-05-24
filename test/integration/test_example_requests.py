@@ -1,6 +1,4 @@
-from example_protocol.example_client import Client
-
-from .fixture_example_client import test_client
+from .fixture_example_client import test_client, Client
 
 
 def test_uuid(test_client: Client):

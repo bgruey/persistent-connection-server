@@ -2,7 +2,7 @@ import math
 import time
 import typing
 
-from .fixture_example_client import test_client
+from .fixture_example_client import test_client, Client
 
 
 def avg_std(data: typing.List[float], factor: float = 1.0e3, decimals: int = 3):
@@ -11,7 +11,7 @@ def avg_std(data: typing.List[float], factor: float = 1.0e3, decimals: int = 3):
     return round(avg * factor, decimals), round(std * factor, decimals)
 
 
-def test_no_40ms_delay(test_client):
+def test_no_40ms_delay(test_client: Client):
     """
     Nagle's Algorithm coupled with Delayed Ack can introduce a 40ms
     delay in send/acls.

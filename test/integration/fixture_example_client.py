@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from client.client import BaseClientConfig
+from pc_client import BaseClientConfig
 
 from example_protocol.example_client import Client
 from pc_protocol.error import ErrorResponse
