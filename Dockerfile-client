@@ -11,12 +11,12 @@ RUN mkdir -p $DockerHOME
 WORKDIR $DockerHOME
 COPY test/ $DockerHOME/test/
 
-RUN echo "client"
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip
 RUN python -m pip install git+https://github.com/bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
+RUN echo "client"
 RUN ls -l test/
-RUN python -m pip install test/requirements.txt
+RUN python -m pip install -r test/requirements.txt
 
 CMD python -m pytest -vvv test/
 

@@ -16,4 +16,5 @@ config = HeadConfig(
     socket_timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),
     Worker=Worker,
 )
+logging.info("Starting Server Head")
 head = Head(config=config)
