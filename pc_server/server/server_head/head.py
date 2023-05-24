@@ -58,6 +58,7 @@ class Head:
         finished_workers = []
         logging.info("%s", [(k, v) for k, v in self.workers.items()])
         for pid, worker in self.workers.items():
+            worker.join(0.05)
             if not worker.is_alive():
                 finished_workers.append(pid)
         for pid in finished_workers:
