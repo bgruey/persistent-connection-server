@@ -1,6 +1,7 @@
 import pytest
 import time
 import os
+import logging
 from pc_protocol import mresponses
 
 from .fixture_example_client import test_client, Client
