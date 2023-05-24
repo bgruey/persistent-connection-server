@@ -91,6 +91,7 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
     def shutdown(self):
         with self.server_run.get_lock():
             self.server_run.value = 0
+        logging.info("Sending shutdown response")
         self._send(self.shutdown_response_b)
         self._close()
 
