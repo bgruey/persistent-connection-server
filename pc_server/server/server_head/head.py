@@ -37,12 +37,12 @@ class Head:
     config: HeadConfig
     listening_socket: socket.socket
     workers: typing.Dict[int, BaseWorker]
-    open_message_ok_b: bytes
+    open_message_ok: mresponses.OpenResponse
     run: multiprocessing.Value
 
     def __init__(self, config: HeadConfig):
         self.config = config
-        self.open_message_ok_b = mresponses.OpenResponse(status="OK").to_bytes()
+        self.open_message_ok = mresponses.OpenResponse(status="OK", pid=0)
         self.run = multiprocessing.Value("i", 1)
         self.workers = {}
         self._connect()
@@ -57,6 +57,7 @@ class Head:
     def _clean_workers(self) -> int:
         finished_workers = []
         for pid, worker in self.workers.items():
+            worker.join(0.05)
             if not worker.is_alive():
                 finished_workers.append(pid)
         for pid in finished_workers:
@@ -66,7 +67,6 @@ class Head:
     def add_worker(self, conn: socket.socket, addr: str) -> typing.Optional[BaseWorker]:
         self._clean_workers()
         if len(self.workers) < self.config.max_workers:
-            send_message(conn, self.open_message_ok_b)
             worker = self.config.Worker(
                 connection=conn,
                 address=addr,
@@ -75,6 +75,8 @@ class Head:
             )
 
             self.workers[worker.pid] = worker
+            self.open_message_ok.update_pid(worker.pid)
+            send_message(conn, self.open_message_ok.to_bytes())
             return self.workers[worker.pid]
 
     def _run(self):
@@ -112,6 +114,7 @@ class Head:
 
             except socket.timeout:
                 pass
+        logging.info("Shutting down server.")
         self.listening_socket.close()
         while self._clean_workers():
             time.sleep(0.5)

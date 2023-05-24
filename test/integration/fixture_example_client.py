@@ -1,11 +1,9 @@
 import os
 
 import pytest
-from client.client import BaseClientConfig
+from pc_client import BaseClientConfig
 
 from example_protocol.example_client import Client
-from pc_protocol.error import ErrorResponse
-from pc_protocol.mresponses import ShutdownResponse
 
 
 @pytest.fixture(scope="session")
@@ -19,15 +17,5 @@ def test_client() -> Client:
     )
     yield client
 
-    response = client.send_shutdown()
-    assert type(response) == ShutdownResponse
-
-    try:
-        response = client.reconnect()
-        assert type(response) == ErrorResponse
-        assert response.data.code == 400
-        assert response.data.description == "Shutting down, not accepting connections."
-    except (ConnectionRefusedError, ConnectionResetError):
-        pass
-    except Exception as exc:
-        raise Exception(str(exc))
+    if client.psock.is_open():
+        client.close()

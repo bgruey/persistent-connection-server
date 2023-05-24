@@ -1,3 +1,4 @@
+import logging
 import socket
 import struct
 import time
@@ -138,3 +139,6 @@ class SizeDataSocket:
         message = recv_message(self.sock, self.config.buffer_size)
         self.last_times["e_recv"] = time.perf_counter()
         return message
+
+    def is_open(self) -> bool:
+        return self.open
