@@ -75,7 +75,6 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
         self._send(message=ErrorResponse(code=code, description=description).to_bytes())
 
     def run(self):
-        logging.info("Starting Worker %s", self.ident)
         while self.process_run:
             ready = select.select([self.connection], [], [], 0.1)
             if ready[0]:
@@ -88,12 +87,10 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
             elif time.time() - self.last_recv > self.timeout_s:
                 logging.info("Closing due to timeout.")
                 self.send_close()
-        logging.info("Finished process.")
 
     def shutdown(self):
         with self.server_run.get_lock():
             self.server_run.value = 0
-        logging.info("Sending shutdown response")
         self._send(self.shutdown_response_b)
         self._close()
 
