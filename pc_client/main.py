@@ -4,6 +4,7 @@ import threading
 import time
 
 from client.client import BaseClientConfig
+
 from example_protocol.example_client import Client
 
 logging.basicConfig(

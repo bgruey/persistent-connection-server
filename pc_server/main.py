@@ -1,8 +1,9 @@
 import logging
 import os
 
-from example_protocol.example_worker import Worker
 from server.server_head.head import Head, HeadConfig
+
+from example_protocol.example_worker import Worker
 
 logging.basicConfig(
     level=logging.INFO, format="%(created)s %(process)s %(lineno)s: %(message)s"
