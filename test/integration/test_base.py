@@ -1,8 +1,8 @@
 import pytest
 import time
 import os
-import logging
 from pc_protocol import mresponses
+from pc_protocol.error import ErrorResponse
 
 from .fixture_example_client import test_client, Client
 
@@ -37,7 +37,11 @@ def test_shutdown(test_client: Client):
     response = test_client.send_shutdown()
     assert response == mresponses.ShutdownResponse()
     try:
-        test_client.reconnect()
-        raise Exception("Successfully reconnected after sending shutdown request.")
+        response = test_client.reconnect()
+        assert type(response) == ErrorResponse
+        assert response.data.code == 400
+        assert response.data.description == "Shutting down, not accepting connections."
+    except (ConnectionRefusedError, ConnectionResetError):
+        pass
     except Exception as exc:
-        logging.info("Failed Reconnect as expected: %s", exc)
+        raise Exception(str(exc))
