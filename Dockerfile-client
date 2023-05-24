@@ -19,5 +19,4 @@ RUN echo "client"
 RUN ls -l test/
 RUN python -m pip install -r test/requirements.txt
 
-CMD python -m pytest -vvv test/
-
+CMD python -m pytest -vvv test/ && echo "Finished tests."

@@ -112,6 +112,7 @@ class Head:
 
             except socket.timeout:
                 pass
+        logging.info("Shutting down server.")
         self.listening_socket.close()
         while self._clean_workers():
             time.sleep(0.5)
