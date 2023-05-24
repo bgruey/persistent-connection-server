@@ -4,8 +4,8 @@ import socket
 import time
 import typing
 
-from protocol import error, mrequests, mresponses
-from protocol.socket_lib import recv_message, send_message
+from pc_protocol import error, mrequests, mresponses
+from pc_protocol.socket_lib import recv_message, send_message
 
 from ..server_worker.worker import BaseWorker
 

@@ -56,7 +56,7 @@ class SizeDataSocketConfig:
 
 class SizeDataSocket:
     """
-    Socket client that utilizes the size-data protocol:
+    Socket pc_client that utilizes the size-data pc_protocol:
         - send the size of the data as an integer
         - send the data as bytes
     """

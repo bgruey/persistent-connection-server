@@ -1,4 +1,4 @@
-from protocol.base import Base
+from pc_protocol.base import Base
 
 
 class UUIDResponse(Base):

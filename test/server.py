@@ -1,8 +1,9 @@
 import logging
 import os
 
+from pc_server.server.server_head import Head, HeadConfig
+
 from example_protocol.example_worker import Worker
-from server.server_head.head import Head, HeadConfig
 
 logging.basicConfig(
     level=logging.INFO, format="%(created)s %(process)s %(lineno)s: %(message)s"
@@ -15,4 +16,5 @@ config = HeadConfig(
     socket_timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),
     Worker=Worker,
 )
+logging.info("Starting Server Head")
 head = Head(config=config)

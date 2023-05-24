@@ -2,25 +2,21 @@ FROM python:3.10-bullseye
 
 # setup environment variable
 ENV DockerHOME=/home/client
-
+ARG BRANCH_NAME
+ENV BRANCH_NAME="${BRANCH_NAME}"
 # set work directory
 RUN mkdir -p $DockerHOME
 
 # where your code lives
 WORKDIR $DockerHOME
+COPY test/ $DockerHOME/test/
 
 RUN apt-get update && apt-get upgrade -y
-
-# copy whole project to your docker home directory.
-ADD client/ $DockerHOME/
-COPY protocol $DockerHOME/protocol
-COPY example_protocol $DockerHOME/example_protocol
-
-# install dependencies
 RUN pip install --upgrade pip
-# run this command to install all dependencies
-RUN pip install -r requirements.txt
+RUN python -m pip install git+https://github.com/bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
+RUN echo "client"
+RUN ls -l test/
+RUN python -m pip install -r test/requirements.txt
 
-#CMD python main.py && while true; do sleep 30; done
 CMD python -m pytest -vvv test/
 

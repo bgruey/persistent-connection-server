@@ -1,6 +1,6 @@
 import logging
 
-from protocol import mrequests, mresponses
+from pc_protocol import mrequests, mresponses
 
 from .psocket import PersistentSocket, PSocketConfig
 

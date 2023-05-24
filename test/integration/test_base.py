@@ -2,7 +2,7 @@ import os
 import time
 
 from example_protocol.example_client import Client
-from protocol import mresponses
+from pc_protocol import mresponses
 
 from .fixture_example_client import test_client
 

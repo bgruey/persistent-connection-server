@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-server
+      args:
+        BRANCH_NAME: "${BRANCH_NAME}"
     container_name: "${SERVER_HOST}"
     init: true
     expose:
@@ -21,6 +23,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-client
+      args:
+        BRANCH_NAME: "${BRANCH_NAME}"
     container_name: "${CLIENT_HOST}"
     init: true
     environment:

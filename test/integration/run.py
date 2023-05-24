@@ -1,5 +1,4 @@
 from . import test_base, test_example_requests
-from .fixture_example_client import test_client
 
 
 def test_run(test_client):
