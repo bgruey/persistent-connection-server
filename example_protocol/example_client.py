@@ -1,4 +1,4 @@
-from pc_client.client import BaseClient
+from pc_client.client.client import BaseClient
 
 from .prequests import UUIDRequest
 from .presponses import UUIDResponse

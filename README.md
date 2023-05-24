@@ -58,3 +58,7 @@ Can be installed via `pip` from the repo directly, good to use the `main` branch
 ```
 python -m pip uninstall git+ssh://git@github.com/bgruey/persistent-connection-server.git@main
 ```
+This will install three packages:
+* `pc_client`: Client package for connecting to the server.
+* `pc_server`: Server package.
+* `pc_protocol`: Base protocol messages for the server.
