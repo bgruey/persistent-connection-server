@@ -10,6 +10,7 @@ RUN mkdir -p $DockerHOME
 # where your code lives
 WORKDIR $DockerHOME
 COPY test/ $DockerHOME/test/
+COPY example_protocol/ $DockerHOME/example_protocol/
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip
@@ -18,5 +19,4 @@ RUN echo "client"
 RUN ls -l test/
 RUN python -m pip install -r test/requirements.txt
 
-CMD python -m pytest -vvv test/
-
+CMD python -m pytest -vvv test/ && echo "Finished tests."

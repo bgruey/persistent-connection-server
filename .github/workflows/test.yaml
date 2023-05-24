@@ -33,4 +33,4 @@ jobs:
           source test_env
           export $(cut -d= -f1 test_env)
           export "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})"
-          docker-compose up --build
+          docker-compose up --build --exit-code-from client
