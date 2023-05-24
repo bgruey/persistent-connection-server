@@ -15,4 +15,8 @@ def test_client() -> Client:
             timeout_s=float(os.getenv("SOCKET_TIMEOUT_S")),
         )
     )
-    return client
+    yield client
+
+    if client.psock.is_open():
+        client.close()
+        

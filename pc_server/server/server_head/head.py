@@ -56,7 +56,11 @@ class Head:
 
     def _clean_workers(self) -> int:
         finished_workers = []
-        logging.info("%s", [(k, v) for k, v in self.workers.items()])
+        logging.info(
+            "Finishing %s workers:\n%s",
+            len(self.workers),
+            [(k, v) for k, v in self.workers.items()],
+        )
         for pid, worker in self.workers.items():
             worker.join(0.05)
             if not worker.is_alive():
@@ -118,9 +122,4 @@ class Head:
         logging.info("Shutting down server.")
         self.listening_socket.close()
         while self._clean_workers():
-            logging.info(
-                "Waiting for %s workers to finish: (%s)",
-                len(self.workers),
-                self.workers,
-            )
             time.sleep(0.5)
