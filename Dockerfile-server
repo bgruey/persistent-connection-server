@@ -11,10 +11,10 @@ RUN mkdir -p $DockerHOME
 # where your code lives
 WORKDIR $DockerHOME
 ADD test/ $DockerHOME/
-COPY example_protocol/ $DockerHOME/exampl_protocol/
+COPY example_protocol/ $DockerHOME/example_protocol/
 
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip
 RUN python -m pip install git+https://github.com/bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
 
-CMD python server.py
+CMD ls -l && python server.py
