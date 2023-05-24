@@ -115,5 +115,5 @@ class Head:
         logging.info("Shutting down server.")
         self.listening_socket.close()
         while self._clean_workers():
-            logging.info("Waiting for workers to finish.")
+            logging.info("Waiting for %s workers to finish.", len(self.workers))
             time.sleep(0.5)
