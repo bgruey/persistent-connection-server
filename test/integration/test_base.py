@@ -1,8 +1,3 @@
-import logging
-import os
-import time
-import pytest
-
 from pc_protocol import mresponses
 
 from .fixture_example_client import test_client, Client

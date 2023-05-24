@@ -17,4 +17,4 @@ RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip
 RUN python -m pip install git+https://github.com/bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
 
-CMD ls -l && python server.py
+CMD python server.py

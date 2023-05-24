@@ -10,8 +10,9 @@ def avg_std(data: typing.List[float], factor: float = 1.0e3, decimals: int = 3):
     std = math.sqrt(sum(pow(e - avg, 2) for e in data) / (len(data) - 1.0))
     return round(avg * factor, decimals), round(std * factor, decimals)
 
-
+  
 def test_no_40ms_delay(test_client: Client):
+
     """
     Nagle's Algorithm coupled with Delayed Ack can introduce a 40ms
     delay in send/acls.
