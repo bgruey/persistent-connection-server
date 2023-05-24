@@ -3,6 +3,7 @@ FROM python:3.10-bullseye
 # setup environment variable
 ENV DockerHOME=/home/client
 ARG BRANCH_NAME
+ENV BRANCH_NAME="${BRANCH_NAME}"
 # set work directory
 RUN mkdir -p $DockerHOME
 
@@ -10,6 +11,7 @@ RUN mkdir -p $DockerHOME
 WORKDIR $DockerHOME
 ADD test/ $DockerHOME/
 
+RUN ls -l && echo "BRANCH NAME IS $BRANCH_NAME"
 RUN apt-get update && apt-get upgrade -y
 RUN pip install --upgrade pip
 RUN python -m pip install git+https://github.com/bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
