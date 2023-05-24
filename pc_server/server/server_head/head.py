@@ -42,7 +42,7 @@ class Head:
 
     def __init__(self, config: HeadConfig):
         self.config = config
-        self.open_message_ok_b = mresponses.OpenResponse(status="OK", pid=0)
+        self.open_message_ok = mresponses.OpenResponse(status="OK", pid=0)
         self.run = multiprocessing.Value("i", 1)
         self.workers = {}
         self._connect()
