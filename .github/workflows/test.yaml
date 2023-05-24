@@ -33,6 +33,4 @@ jobs:
           source test_env
           export $(cut -d= -f1 test_env)
           export "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})"
-          envsubst < docker-compose.yaml > dc.yaml
-          cat dc.yaml
-          docker-compose -f dc.yaml up --build --exit-code-from "${CLIENT_HOST}"
+          docker-compose up --build --exit-code-from client
