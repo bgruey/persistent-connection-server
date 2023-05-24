@@ -87,6 +87,7 @@ class BaseWorker(multiprocessing.Process, SizeDataSocket):
             elif time.time() - self.last_recv > self.timeout_s:
                 logging.info("Closing due to timeout.")
                 self.send_close()
+        logging.info("Finished process.")
 
     def shutdown(self):
         with self.server_run.get_lock():
