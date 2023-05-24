@@ -16,8 +16,10 @@ def test_ping_thread(test_client: Client):
     last_comm = test_client.psock.last_recv
     start = time.time()
     timeout_s = float(os.getenv("SOCKET_TIMEOUT_S"))
-    while last_comm == test_client.psock.last_recv:
+    while True:
         time.sleep(0.1)
+        if last_comm == test_client.psock.last_recv:
+            break
         if time.time() - start > timeout_s:
             raise TimeoutError("No recv update in timeout seconds.")
     assert True

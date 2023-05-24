@@ -19,4 +19,3 @@ def test_client() -> Client:
 
     if client.psock.is_open():
         client.close()
-        
