@@ -3,7 +3,7 @@ import multiprocessing
 import socket
 import uuid
 
-from server.server_worker.worker import BaseWorker
+from pc_server.server_worker.worker import BaseWorker
 
 from .prequests import UUIDRequest
 from .presponses import UUIDResponse

@@ -2,10 +2,10 @@ import os
 
 import pytest
 
-from client.client import BaseClientConfig
+from pc_client.client import BaseClientConfig
 from example_protocol.example_client import Client
-from protocol.error import ErrorResponse
-from protocol.mresponses import ShutdownResponse
+from pc_protocol.error import ErrorResponse
+from pc_protocol.mresponses import ShutdownResponse
 
 
 @pytest.fixture(scope="session")

@@ -44,5 +44,5 @@ jobs:
       - name: run test
         run: |
           BRANCH_NAME="$(echo ${GITHUB_REF#refs/heads/})"
-          python -m pip install git+git@github.com:bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
+          python -m pip install git+ssh://git@github.com/bgruey/persistent-connection-server.git@"${BRANCH_NAME}"
           python -c "import PersistentConnectionServer"

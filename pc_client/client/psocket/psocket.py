@@ -3,8 +3,8 @@ import threading
 import time
 import typing
 
-from protocol import mrequests, mresponses
-from protocol.socket_lib import SizeDataSocket, SizeDataSocketConfig
+from pc_protocol import mrequests, mresponses
+from pc_protocol.socket_lib import SizeDataSocket, SizeDataSocketConfig
 
 
 def thread_lock_wrapper(func):

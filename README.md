@@ -51,3 +51,10 @@ The base client/server implements the following messages in request/response for
 See the `example_protocol` library for examples of client, server worker, and
 messages based of the base classes. The `main.py` files in `client/` and `server/`
 give examples of running the client and server.
+
+## Installation
+
+Can be installed via `pip` from the repo directly, good to use the `main` branch.
+```
+python -m pip uninstall git+ssh://git@github.com/bgruey/persistent-connection-server.git@main
+```

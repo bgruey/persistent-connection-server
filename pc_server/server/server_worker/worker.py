@@ -4,9 +4,9 @@ import select
 import socket
 import time
 
-from protocol import mrequests, mresponses
-from protocol.error import ErrorResponse
-from protocol.socket_lib import SizeDataSocket
+from pc_protocol import mrequests, mresponses
+from pc_protocol.error import ErrorResponse
+from pc_protocol.socket_lib import SizeDataSocket
 
 logging.basicConfig(
     level=logging.INFO,

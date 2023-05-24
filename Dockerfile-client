@@ -12,8 +12,8 @@ WORKDIR $DockerHOME
 RUN apt-get update && apt-get upgrade -y
 
 # copy whole project to your docker home directory.
-ADD client/ $DockerHOME/
-COPY protocol $DockerHOME/protocol
+ADD pc_client/ $DockerHOME/
+COPY pc_protocol $DockerHOME/protocol
 COPY example_protocol $DockerHOME/example_protocol
 
 # install dependencies
